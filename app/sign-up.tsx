@@ -27,8 +27,7 @@ const schema = yup.object().shape({
         .date()
         .typeError("Please enter a valid date")
         .required('A birthday is required')
-        .max(new Date(Date.now() - 567648000000), 'You must be at least 18 years old')
-    ,
+        .max(new Date(Date.now() - 567648000000), 'You must be at least 18 years old'),
 });
 
 export default function SignIn() {
