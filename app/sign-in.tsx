@@ -1,13 +1,13 @@
 import {Link, useRouter} from 'expo-router';
 import * as yup from 'yup';
 import { Text } from '../components/Themed';
-import {AuthForm} from "../components/Auth";
+import {AuthForm, Error} from "../components/Auth";
 import {Controller, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {useState} from "react";
 import {useSession} from "../common/session";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
+import {useState} from "react";
 
 const schema = yup.object().shape({
     email: yup
@@ -16,13 +16,13 @@ const schema = yup.object().shape({
         .email('Invalid email'),
     password: yup
         .string()
-        .required('A password is required')
-        .min(8, 'Password must contain at least 8 characters'),
+        .required('A password is required'),
 });
 
 export default function SignIn() {
-    const [loading, setLoading] = useState(false);
     const {signIn} = useSession();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [message, setMessage] = useState<string|null>(null);
     const router = useRouter();
     const {
         control,
@@ -37,21 +37,21 @@ export default function SignIn() {
     });
 
     const attemptLogin = (formData: any) => {
-        try {
-            setLoading(true);
-            console.log(formData);
-            signIn(formData.email, formData.password)
-            router.replace('/');
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
+        setMessage(null);
+        setIsLoading(true);
+        signIn(formData.email, formData.password)
+            .then(()=>{
+                router.replace('/');
+            }).catch((error) => {
+                setMessage(error.message)
+                setIsLoading(false);
+            });
     }
 
     return (
         <AuthForm>
-            {!loading ? (
+            {message && <Error message={message} />}
+            {!isLoading ? (
                 <>
                     <Controller
                         control={control}

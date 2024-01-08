@@ -1,8 +1,8 @@
 import {Link, useRouter} from 'expo-router';
 import { Text } from '../components/Themed';
-import {AuthForm, authStyles} from "../components/Auth";
+import {AuthForm, authStyles, Error} from "../components/Auth";
 import * as yup from 'yup';
-import { useForm, Controller } from 'react-hook-form';
+import {useForm, Controller, set} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import TextInput from "../components/TextInput";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -31,8 +31,9 @@ const schema = yup.object().shape({
 });
 
 export default function SignIn() {
-    const [loading, setLoading] = useState(false);
     const {signUp} = useSession();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [message, setMessage] = useState<string|null>(null);
     const router = useRouter();
     const {
         control,
@@ -49,21 +50,21 @@ export default function SignIn() {
     });
 
     const attemptSignUp = (formData: any) => {
-        try {
-            setLoading(true);
-            console.log(formData);
-            signUp(formData.username, formData.password, formData.email, formData.birthday)
-            router.replace('/');
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
+        setMessage(null);
+        setIsLoading(true);
+        signUp(formData.username, formData.password, formData.email, formData.birthday)
+            .then(()=>{
+                router.replace('/');
+            }).catch((error) => {
+                setMessage(error.message);
+                setIsLoading(false);
+            });
     };
 
     return (
         <AuthForm>
-            {!loading ? (
+            {message && <Error message={message} />}
+            {!isLoading ? (
                 <>
                     <Controller
                         control={control}
@@ -143,6 +144,7 @@ export default function SignIn() {
                     Already registered? Log in here.
                 </Text>
             </Link>
+
         </AuthForm>
     );
 }

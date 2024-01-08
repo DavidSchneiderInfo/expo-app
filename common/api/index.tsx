@@ -1,5 +1,4 @@
 import {MatchResponse, ProfileDetails, UserAuthentication, UserDetails} from "../types";
-import {ImagePickerAsset} from "expo-image-picker";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -19,15 +18,22 @@ function useApi() {
             }),
         })
             .then((response) => {
-                if(response.status===422) {
-                    console.log(response.json())
-                    throw Error('These credentials are already taken.');
+                if(response.status!==200)
+                {
+                    switch (response.status)
+                    {
+                        case 409:
+                            throw Error('These credentials are already taken.');
+                        default:
+                            throw Error('Invalid response status code: ' + response.status);
+                    }
                 }
                 return response.json();
             })
             .then((response: UserAuthentication) => {
                 return response;
-            });
+            })
+            .catch((error) => Promise.reject(error));
     }
 
     const requestSignIn = async (email: string, password: string): Promise<UserAuthentication> => {
@@ -42,7 +48,19 @@ function useApi() {
                 password: password,
             }),
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if(response.status!==200)
+                {
+                    switch (response.status)
+                    {
+                        case 401:
+                            throw Error('These credentials are incorrect.');
+                        default:
+                            throw Error('Invalid response status code: ' + response.status);
+                    }
+                }
+                return response.json();
+            })
             .then((response: UserAuthentication) => {
                 return response;
             });
@@ -57,7 +75,13 @@ function useApi() {
                 'Authorization': `Bearer ${token}`
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if(response.status!==200)
+                {
+                    throw Error('Error fetching user details');
+                }
+                return response.json();
+            })
             .then((response: UserDetails) => {
                 return response;
             });
@@ -78,25 +102,12 @@ function useApi() {
             },
             body: JSON.stringify(details),
         })
-            .then((response) => response.json())
-            .then((response: UserDetails) => {
-                return response;
-            });
-    }
-
-    const setAvatar = async (token: string, photo: string): Promise<UserDetails> => {
-        return await fetch(apiUrl + 'user/avatar', {
-            method: 'PATCH',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                photo: photo
-            }),
-        })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw Error('Error setting user details');
+                }
+                return response.json();
+            })
             .then((response: UserDetails) => {
                 return response;
             });
@@ -112,8 +123,9 @@ function useApi() {
             },
         })
             .then((response) => {
-                console.log(response.status);
-                console.log("Body");
+                if (response.status !== 200) {
+                    throw Error('Error fetching match data');
+                }
                 return response.json();
             })
             .then((response) => {
@@ -134,31 +146,15 @@ function useApi() {
                 user_id: profileId
             }),
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw Error('Error fetching match data');
+                }
+                return response.json();
+            })
             .then((response: MatchResponse) => {
                 return response;
             });
-    }
-
-    const uploadMedia = async (token: string, asset: ImagePickerAsset): Promise<void> => {
-        let filename = asset.uri.split('/').pop();
-
-        if(!filename)
-            throw new Error("Invalid filename");
-
-        await fetch(apiUrl + 'upload/media', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            },
-        })
-            .then((response) => {
-                if(response.status!==200)
-                    throw new Error("Validation failed.")
-                return;
-            }).catch((error: Error) => console.log(error.message));
     }
 
     return {
@@ -166,10 +162,8 @@ function useApi() {
         requestSignIn,
         getUserData,
         setUserData,
-        setAvatar,
         getProfiles,
-        likeProfile,
-        uploadMedia
+        likeProfile
     };
 };
 

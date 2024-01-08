@@ -10,14 +10,12 @@ export type UserDetails = {
     email: string;
     birthday: string;
     bio: string | null;
-    avatar: string | null;
 }
 
 export type ProfileDetails = {
     id: number;
     name: string;
     bio: string;
-    avatar: string;
     age: number;
 }
 
@@ -35,4 +33,9 @@ export enum PhotoSource {
 export type UserAuthentication = {
     token: string;
     user: UserDetails;
+}
+
+export type ValidationError = {
+    message: string,
+    errors: any,
 }

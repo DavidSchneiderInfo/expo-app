@@ -14,7 +14,7 @@ export function useSession() {
 }
 
 export function useActiveUser(): UserDetails {
-    const {user} = useSession();
+    const {user,session} = useSession();
     if(user!==null)
     {
         return user;

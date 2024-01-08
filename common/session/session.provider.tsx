@@ -3,7 +3,6 @@ import AuthContext from "./session.context";
 import {UserDetails} from "../types";
 import useApi from "../api";
 import {useStorageState} from "../storage";
-import {date} from "yup";
 
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
@@ -52,6 +51,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 },
                 signOut: () => {
                     setSession(null);
+                    setUser(null);
                 },
                 session,
                 user,
