@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {useStorageState} from "../../useStorageState";
-import {UserDetails} from "../../types";
-import useApi from "../../useApi";
 import AuthContext from "./session.context";
+import {UserDetails} from "../types";
+import useApi from "../api";
+import {useStorageState} from "../storage";
+import {date} from "yup";
 
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
@@ -38,7 +39,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
                         throw error;
                     }
                 },
-                signUp: async (username: string, password: string, email: string, birthday: string) => {
+                signUp: async (username: string, password: string, email: string, birthday: Date) => {
                     try {
                         const credentials = await requestSignUp(username, password, email, birthday);
                         await checkUserIn(credentials.token);

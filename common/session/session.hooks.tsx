@@ -1,6 +1,6 @@
 import React from "react";
-import {UserDetails} from "../../types";
 import AuthContext from "./session.context";
+import {UserDetails} from "../types";
 
 export function useSession() {
     const value = React.useContext(AuthContext);
