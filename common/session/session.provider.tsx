@@ -13,6 +13,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
         const userData = await getUserData(token);
         setSession(token);
         setUser(userData);
+        return userData;
     };
 
     useEffect(() => {
@@ -30,7 +31,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 signIn: async (email: string, password: string) => {
                     try {
                         const credentials = await requestSignIn(email, password);
-                        await checkUserIn(credentials.token);
+                        return checkUserIn(credentials.token);
                     }
                     catch(error)
                     {
@@ -41,7 +42,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 signUp: async (username: string, password: string, email: string, birthday: Date) => {
                     try {
                         const credentials = await requestSignUp(username, password, email, birthday);
-                        await checkUserIn(credentials.token);
+                        return checkUserIn(credentials.token);
                     }
                     catch(error)
                     {

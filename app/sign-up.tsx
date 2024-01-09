@@ -54,7 +54,7 @@ export default function SignIn() {
         setIsLoading(true);
         signUp(formData.username, formData.password, formData.email, formData.birthday)
             .then(()=>{
-                router.replace('/');
+                router.replace('/setup-profile');
             }).catch((error) => {
                 setMessage(error.message);
                 setIsLoading(false);

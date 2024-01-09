@@ -20,7 +20,7 @@ const schema = yup.object().shape({
 });
 
 export default function SignIn() {
-    const {signIn} = useSession();
+    const {signIn, user} = useSession();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [message, setMessage] = useState<string|null>(null);
     const router = useRouter();
@@ -31,8 +31,8 @@ export default function SignIn() {
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            email: '',
-            password: '',
+            email: 'd4vid81@gmail.com',
+            password: 'secret12',
         },
     });
 
@@ -40,8 +40,9 @@ export default function SignIn() {
         setMessage(null);
         setIsLoading(true);
         signIn(formData.email, formData.password)
-            .then(()=>{
-                router.replace('/');
+            .then((details)=>{
+                console.log("Redirecting to /setup-profile until we know the profile is ready");
+                router.replace('/setup-profile');
             }).catch((error) => {
                 setMessage(error.message)
                 setIsLoading(false);
