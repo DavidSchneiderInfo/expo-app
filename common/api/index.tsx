@@ -1,4 +1,4 @@
-import {MatchResponse, ProfileDetails, UserAuthentication, UserDetails} from "../types";
+import {MatchResponse, ProfileDetails, UserAuthentication} from "../types";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -22,6 +22,8 @@ function useApi() {
                 {
                     switch (response.status)
                     {
+                        case 500:
+                            throw Error('Server error.');
                         case 409:
                             throw Error('These credentials are already taken.');
                         default:
@@ -53,6 +55,8 @@ function useApi() {
                 {
                     switch (response.status)
                     {
+                        case 500:
+                            throw Error('Server error.');
                         case 401:
                             throw Error('These credentials are incorrect.');
                         default:
@@ -66,9 +70,9 @@ function useApi() {
             });
     }
 
-    const getUserData = async (token: string): Promise<UserDetails> => {
-        return await fetch(apiUrl + 'user', {
-            method: 'GET',
+    const refreshSession = async (token: string): Promise<UserAuthentication> => {
+        return await fetch(apiUrl + 'auth/refresh', {
+            method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
@@ -82,7 +86,7 @@ function useApi() {
                 }
                 return response.json();
             })
-            .then((response: UserDetails) => {
+            .then((response: UserAuthentication) => {
                 return response;
             });
     }
@@ -92,7 +96,7 @@ function useApi() {
         email: string;
         birthday: string;
         bio: string | null;
-    }): Promise<UserDetails> => {
+    }): Promise<ProfileDetails> => {
         return await fetch(apiUrl + 'user', {
             method: 'PATCH',
             headers: {
@@ -108,7 +112,7 @@ function useApi() {
                 }
                 return response.json();
             })
-            .then((response: UserDetails) => {
+            .then((response: ProfileDetails) => {
                 return response;
             });
     }
@@ -160,11 +164,11 @@ function useApi() {
     return {
         requestSignUp,
         requestSignIn,
-        getUserData,
+        refreshSession,
         setUserData,
         getProfiles,
         likeProfile
     };
-};
+}
 
 export default useApi;

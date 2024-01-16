@@ -1,4 +1,4 @@
-import {Link, useRouter} from 'expo-router';
+import {Link} from 'expo-router';
 import * as yup from 'yup';
 import { Text } from '../components/Themed';
 import {AuthForm, Error} from "../components/Auth";
@@ -20,10 +20,10 @@ const schema = yup.object().shape({
 });
 
 export default function SignIn() {
-    const {signIn, user} = useSession();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const {signIn} = useSession();
+    const [isLoading, setIsLoading] = useState<boolean|string>(false);
     const [message, setMessage] = useState<string|null>(null);
-    const router = useRouter();
+
     const {
         control,
         handleSubmit,
@@ -38,15 +38,17 @@ export default function SignIn() {
 
     const attemptLogin = (formData: any) => {
         setMessage(null);
-        setIsLoading(true);
-        signIn(formData.email, formData.password)
-            .then((details)=>{
-                console.log("Redirecting to /setup-profile until we know the profile is ready");
-                router.replace('/setup-profile');
-            }).catch((error) => {
-                setMessage(error.message)
-                setIsLoading(false);
-            });
+        setIsLoading('Attempting login ...');
+        try {
+            signIn(formData.email, formData.password);
+        }catch(error) {
+            if(typeof error == 'string' )
+                setMessage(error);
+            else
+                console.log(error);
+        }finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -88,7 +90,7 @@ export default function SignIn() {
                     </Button>
                 </>
             ) : (
-                <Text>Attempting login ...</Text>
+                <Text>{isLoading}</Text>
             )}
             <Link href="/sign-up">
                 <Text>

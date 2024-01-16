@@ -1,4 +1,4 @@
-import {Link, useRouter} from 'expo-router';
+import {Link} from 'expo-router';
 import { Text } from '../components/Themed';
 import {AuthForm, authStyles, Error} from "../components/Auth";
 import * as yup from 'yup';
@@ -32,9 +32,9 @@ const schema = yup.object().shape({
 
 export default function SignIn() {
     const {signUp} = useSession();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean|string>(false);
     const [message, setMessage] = useState<string|null>(null);
-    const router = useRouter();
+
     const {
         control,
         handleSubmit,
@@ -42,23 +42,26 @@ export default function SignIn() {
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            email: '',
-            password: '',
-            username: '',
+            email: 'd4vid@hotmail.com',
+            password: 'secret12',
+            username: 'John Doe',
             birthday: new Date(0),
         },
     });
 
     const attemptSignUp = (formData: any) => {
         setMessage(null);
-        setIsLoading(true);
-        signUp(formData.username, formData.password, formData.email, formData.birthday)
-            .then(()=>{
-                router.replace('/setup-profile');
-            }).catch((error) => {
-                setMessage(error.message);
-                setIsLoading(false);
-            });
+        setIsLoading('Signing up ...');
+        try {
+            signUp(formData.username, formData.password, formData.email, formData.birthday);
+        }catch(error) {
+            if(typeof error == 'string' )
+                setMessage(error);
+            else
+                console.log(error);
+        }finally {
+            setIsLoading(false);
+        }
     };
 
     return (

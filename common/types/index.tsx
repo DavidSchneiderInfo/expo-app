@@ -1,41 +1,43 @@
-export type SignUpDetails = {
-    name: string;
-    email: string;
-    password: string;
-    birthday: string;
-}
-
-export type UserDetails = {
-    name: string;
-    email: string;
-    birthday: string;
-    bio: string | null;
+export enum Sex {
+    f = 'f',
+    m = 'm',
+    x = 'x',
 }
 
 export type ProfileDetails = {
-    id: number;
     name: string;
-    bio: string;
-    age: number;
+    bio: string | null;
+    height: number | null;
+    age: number | null;
+    sex: Sex | null;
+    media: []
 }
 
 export type MatchResponse = {
     match: boolean;
 }
 
-export type Reducer<S, A> = (prevState: S, action: A) => S;
-
-export enum PhotoSource {
-    camera = 'camera',
-    library = 'library',
-}
-
 export type UserAuthentication = {
     token: string;
-    user: UserDetails;
+    expires_at: TDateISO;
+    user: ProfileDetails;
+    active: boolean;
 }
 
 export type ValidationError = {
     message: string,
     errors: any,
 }
+
+type TYear         = `${number}${number}${number}${number}`;
+type TMonth        = `${number}${number}`;
+type TDay          = `${number}${number}`;
+type THours        = `${number}${number}`;
+type TMinutes      = `${number}${number}`;
+type TSeconds      = `${number}${number}`;
+type TMilliseconds = `${number}${number}${number}`;
+
+type TDateISODate = `${TYear}-${TMonth}-${TDay}`;
+type TDateISOTime = `${THours}:${TMinutes}:${TSeconds}.${TMilliseconds}`;
+
+export type TDateISO = `${TDateISODate}T${TDateISOTime}Z`;

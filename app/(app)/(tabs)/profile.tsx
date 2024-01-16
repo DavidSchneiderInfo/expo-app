@@ -1,20 +1,17 @@
 import { StyleSheet } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import {useSession} from "../../../common/session";
-import {useRouter} from "expo-router";
+import ProfileForm from "../../../components/Profile/form";
+import ScrollView from "../../../components/ScrollView";
 
 export default function ProfileScreen() {
-  const {signOut} = useSession();
-  const router = useRouter();
-
-  const logout = () => {
-    signOut();
-    router.replace('/sign-in');
-  }
+  const {session} = useSession();
   return (
-      <View style={styles.container}>
-        <Text>Profile</Text>
-      </View>
+      <ScrollView>
+          {session && (
+            <ProfileForm profile={session.user} />
+          )}
+      </ScrollView>
   );
 }
 

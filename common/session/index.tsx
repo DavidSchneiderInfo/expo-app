@@ -1,6 +1,5 @@
 import AuthContext from "./session.context";
 import {
-    useActiveUser,
     useSession
 } from "./session.hooks";
 import {AuthContextType} from "./session.types";
@@ -10,6 +9,5 @@ export {
     AuthContext,
     AuthContextType,
     SessionProvider,
-    useActiveUser,
     useSession,
 };

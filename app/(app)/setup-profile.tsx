@@ -1,9 +1,15 @@
-import {Text, View} from "../../components/Themed";
+import {useSession} from "../../common/session";
+import ProfileForm from "../../components/Profile/form";
+import ScrollView from "../../components/ScrollView";
 
 export default function SetupProfile() {
+    const {session} = useSession();
+
     return (
-        <View>
-            <Text>Setup your profile</Text>
-        </View>
+        <ScrollView>
+            {session && session?.user && (
+                <ProfileForm profile={session.user} />
+            )}
+        </ScrollView>
     );
 }

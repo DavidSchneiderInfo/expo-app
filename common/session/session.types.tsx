@@ -1,10 +1,9 @@
-import {UserDetails} from "../types";
+import {UserAuthentication} from "../types";
 
 export type AuthContextType = {
-    signIn: (email: string, password: string) => Promise<UserDetails>;
-    signUp: (username: string, password: string, email: string, birthday: Date) => Promise<UserDetails>;
+    signIn: (email: string, password: string) => void;
+    signUp: (username: string, password: string, email: string, birthday: Date) => void;
     signOut: () => void;
-    session?: string | null,
-    isLoading: boolean
-    user: null | UserDetails
+    session?: UserAuthentication | null;
+    isLoading: boolean;
 };

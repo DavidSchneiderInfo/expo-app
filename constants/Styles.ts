@@ -11,6 +11,16 @@ const globalStyles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 20,
     },
+    title: {
+        padding: 5,
+        margin: 5,
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
+    text: {
+        padding: 5,
+        margin: 5,
+    },
 });
 
 export default globalStyles;

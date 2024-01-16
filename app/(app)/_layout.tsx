@@ -1,10 +1,11 @@
-import { Redirect, Stack } from 'expo-router';
+import {Redirect, Stack, useRouter} from 'expo-router';
 import {useSession} from '../../common/session';
 import { Text } from 'react-native';
 import LoadingScreen from "../../components/LoadingScreen";
 
 export default function AppLayout() {
     const {isLoading, session} = useSession();
+    const router = useRouter();
 
     // You can keep the splash screen open, or render a loading screen like we do here.
     if (isLoading) {
@@ -26,6 +27,7 @@ export default function AppLayout() {
         <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="setup-profile" options={{ title: 'Lets get you settled in ...', }} />
         </Stack>
     );
 }

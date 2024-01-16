@@ -1,26 +1,25 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import AuthContext from "./session.context";
-import {UserDetails} from "../types";
 import useApi from "../api";
 import {useStorageState} from "../storage";
+import {useRouter} from "expo-router";
 
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
-    const [user, setUser] = useState<null | UserDetails>(null);
-    const {requestSignUp, requestSignIn, getUserData} = useApi();
+    const {requestSignUp, requestSignIn, refreshSession} = useApi();
+    const router = useRouter();
 
-    const checkUserIn = async (token: string) => {
-        const userData = await getUserData(token);
-        setSession(token);
-        setUser(userData);
-        return userData;
-    };
+    const parseSession = () => {
+        return session
+            ? JSON.parse(session)
+            : session;
+    }
 
     useEffect(() => {
         if(session !== null)
         {
-            getUserData(session).then((userDetails) => {
-                setUser(userDetails);
+            refreshSession(session).then((credentials) => {
+                setSession(JSON.stringify(credentials));
             });
         }
     }, []);
@@ -31,7 +30,12 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 signIn: async (email: string, password: string) => {
                     try {
                         const credentials = await requestSignIn(email, password);
-                        return checkUserIn(credentials.token);
+                        setSession(JSON.stringify(credentials));
+                        router.push(
+                            credentials.active
+                                ? '/'
+                                : '/setup-profile'
+                        )
                     }
                     catch(error)
                     {
@@ -42,7 +46,8 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 signUp: async (username: string, password: string, email: string, birthday: Date) => {
                     try {
                         const credentials = await requestSignUp(username, password, email, birthday);
-                        return checkUserIn(credentials.token);
+                        setSession(JSON.stringify(credentials));
+                        router.push('/setup-profile')
                     }
                     catch(error)
                     {
@@ -52,11 +57,9 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 },
                 signOut: () => {
                     setSession(null);
-                    setUser(null);
                 },
-                session,
-                user,
-                isLoading,
+                session: parseSession(),
+                isLoading
             }}>
             {props.children}
         </AuthContext.Provider>
