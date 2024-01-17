@@ -13,6 +13,13 @@ export type ProfileDetails = {
     media: []
 }
 
+export type ProfileUpdate = {
+    name: string;
+    sex: Sex;
+    bio: string | null;
+    height: number | null;
+}
+
 export type MatchResponse = {
     match: boolean;
 }

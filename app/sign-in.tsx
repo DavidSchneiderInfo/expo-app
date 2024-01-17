@@ -39,16 +39,8 @@ export default function SignIn() {
     const attemptLogin = (formData: any) => {
         setMessage(null);
         setIsLoading('Attempting login ...');
-        try {
-            signIn(formData.email, formData.password);
-        }catch(error) {
-            if(typeof error == 'string' )
-                setMessage(error);
-            else
-                console.log(error);
-        }finally {
-            setIsLoading(false);
-        }
+        const response = signIn(formData.email, formData.password);
+        setIsLoading(false);
     }
 
     return (

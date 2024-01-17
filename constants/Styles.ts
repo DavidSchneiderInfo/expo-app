@@ -10,6 +10,7 @@ const globalStyles = StyleSheet.create({
         borderColor: '#000',
         borderRadius: 5,
         marginBottom: 20,
+        textAlign: 'center',
     },
     title: {
         padding: 5,

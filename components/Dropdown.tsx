@@ -1,20 +1,25 @@
 import {useState} from "react";
 import {useTheme} from "@react-navigation/native";
-import {NativeSyntheticEvent, StyleSheet, TextInput as BaseTextInput, TextInputEndEditingEventData} from "react-native";
+import {StyleSheet} from "react-native";
 import Colors from '../constants/Colors';
 import {Text, View} from "./Themed";
+import {Dropdown} from "react-native-element-dropdown";
 
-export type TextInputProps = {
+export type DropdownOption = {
     label: string,
-    placeholder: null | string,
+    value: any,
+}
+
+export type DropdownProps = {
+    label: string,
     initialValue?: string,
-    secureTextEntry?: boolean,
     onChange?: (update: string) => void
     onPress?: () => void
     validationMessage: string | undefined,
+    values: DropdownOption[],
 }
 
-function TextInput({label, onChange, initialValue, placeholder, secureTextEntry, validationMessage, onPress}: TextInputProps) {
+function DropdownInput({label, onChange, initialValue, validationMessage, values}: DropdownProps) {
     const theme = useTheme();
     const themeStyles = theme.dark
         ? Colors.dark
@@ -29,29 +34,24 @@ function TextInput({label, onChange, initialValue, placeholder, secureTextEntry,
         }
     }
 
-    const validateText = (e: NativeSyntheticEvent<TextInputEndEditingEventData>) => {
-        e.preventDefault();
-    }
-
     return (
         <View style={style.container}>
             <Text style={style.label}>
                 {label}
             </Text>
-            <BaseTextInput
-                placeholder={placeholder ?? label}
-                onPressIn={onPress}
-                onChangeText={updateText}
-                onEndEditing={validateText}
+            <Dropdown
+                data={values}
+                onChange={(option: DropdownOption) => updateText(option.value)}
+                labelField="label"
+                valueField="value"
                 value={value}
-                secureTextEntry={secureTextEntry}
                 style={[
                     style.input,
-                    ,
                     {
                         borderColor: themeStyles.text,
                     },
-                ]}/>
+                ]}
+            />
             {validationMessage && <Text style={style.error}>
                 {validationMessage}
             </Text>}
@@ -59,7 +59,7 @@ function TextInput({label, onChange, initialValue, placeholder, secureTextEntry,
     );
 }
 
-export default TextInput;
+export default DropdownInput;
 
 const style = StyleSheet.create({
     container: {
@@ -72,11 +72,11 @@ const style = StyleSheet.create({
     },
     input: {
         borderStyle: 'solid',
-        borderWidth: 1,
         borderRadius: 5,
+        borderWidth: 1,
         alignSelf: 'stretch',
         marginVertical: 5,
-        padding: 5,
+        paddingHorizontal: 10,
     },
     error: {
         color: 'gray',

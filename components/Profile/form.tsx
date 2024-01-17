@@ -1,14 +1,11 @@
-import {ProfileDetails, Sex} from "../../common/types";
-import {Text, View} from "../Themed";
+import {ProfileDetails, ProfileUpdate, Sex} from "../../common/types";
+import {View} from "../Themed";
 import * as yup from 'yup';
 import {Controller, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import TextInput from "../TextInput";
 import Button from "../Button";
-import globalStyles from "../../constants/Styles";
-import Checkbox from 'expo-checkbox';
-import {Picker} from "@react-native-picker/picker";
-import {useState} from "react";
+import DropdownInput from "../Dropdown";
 
 const schema = yup.object().shape({
     username: yup
@@ -18,15 +15,23 @@ const schema = yup.object().shape({
         .string(),
     sex: yup
         .string()
+        .transform(function (value, originalvalue) {
+            if(this.isType(value))
+            {
+                return value;
+            } else {
+                return originalvalue;
+            }
+        })
         .required('A sex is required'),
 });
 
-export default function ProfileForm(user: {
-    profile: ProfileDetails
-}) {
-    const [showGenderInput, setShowGenderInput] = useState<boolean>(false);
-    const [sex, setSex] = useState<string|null>(null);
+type ProfileFormProps = {
+    profile: ProfileDetails;
+    onSubmit: (formData: ProfileUpdate) => void;
+}
 
+export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
     const {
         control,
         handleSubmit,
@@ -34,20 +39,29 @@ export default function ProfileForm(user: {
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            username: user.profile.name,
-            bio: user.profile.bio ?? '',
-            sex: undefined,
+            username: profile.name,
+            bio: profile.bio ?? '',
+            sex: profile.sex ?? undefined,
         },
     });
 
+    const availableSexes = [
+        { label: 'Female', value: Sex.f },
+        { label: 'Male', value: Sex.m },
+        { label: 'Other', value: Sex.x },
+    ];
+
     const updateProfile = (formData: any) => {
-        console.log(typeof formData);
+        onSubmit({
+            name: formData.name,
+            sex: formData.sex,
+            bio: formData.bio,
+            height: null,
+        });
     }
 
     return (
         <View>
-            <Text style={globalStyles.title}>Setup your profile</Text>
-
             <Controller
                 control={control}
                 rules={{
@@ -59,47 +73,16 @@ export default function ProfileForm(user: {
                 name="username"
             />
 
-            {showGenderInput ? (
-                <>
-                    {sex!==null && (
-                        <Text
-                            onPress={() => setShowGenderInput(false)}
-                            style={globalStyles.button}
-                        >Pick your flavor</Text>
-                    )}
-                    <Picker
-                        selectedValue={sex}
-                        onValueChange={(value) => {
-                            switch (value) {
-                                case Sex.f:
-                                    setSex('female');
-                                    break;
-                                case Sex.m:
-                                    setSex('male');
-                                    break;
-                                default:
-                                    setSex('other');
-                            }
-                        }}
-                    >
-                        <Picker.Item label="Female" value={Sex.f} />
-                        <Picker.Item label="Male" value={Sex.m} />
-                        <Picker.Item label="Other" value={Sex.x} />
-                    </Picker>
-                </>
-            ) : (
-                <TextInput
-                    label='Your gender'
-                    placeholder='Pick a gender'
-                    initialValue={sex ?? ''}
-                    onChange={(value) => {
-                        console.log(typeof value);
-                        console.log(value);
-                    }}
-                    onPress={() => setShowGenderInput(true)}
-                    validationMessage={errors.sex?.message}
-                />
-            )}
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <DropdownInput label='Your gender' validationMessage={errors.sex?.message} values={availableSexes} initialValue={value} onChange={onChange} />
+                )}
+                name="sex"
+            />
 
             <Controller
                 control={control}
@@ -113,9 +96,8 @@ export default function ProfileForm(user: {
             />
 
             <Button action={handleSubmit(updateProfile)}>
-                Lets start
+                Save
             </Button>
-            <Text>{JSON.stringify(user.profile)}</Text>
         </View>
     )
 }
