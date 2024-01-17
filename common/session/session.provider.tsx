@@ -27,33 +27,27 @@ export function SessionProvider(props: React.PropsWithChildren) {
     return (
         <AuthContext.Provider
             value={{
-                signIn: async (email: string, password: string) => {
-                    try {
-                        const credentials = await requestSignIn(email, password);
+                signIn: (email: string, password: string) => {
+                    requestSignIn(email, password).then((credentials) => {
                         setSession(JSON.stringify(credentials));
                         router.push(
                             credentials.active
                                 ? '/'
                                 : '/setup-profile'
                         )
-                    }
-                    catch(error)
-                    {
+                    }).catch((error) => {
                         setSession(null);
                         throw error;
-                    }
+                    });
                 },
-                signUp: async (username: string, password: string, email: string, birthday: Date) => {
-                    try {
-                        const credentials = await requestSignUp(username, password, email, birthday);
+                signUp: (username: string, password: string, email: string, birthday: Date) => {
+                    requestSignUp(username, password, email, birthday).then((credentials) => {
                         setSession(JSON.stringify(credentials));
                         router.push('/setup-profile')
-                    }
-                    catch(error)
-                    {
+                    }).catch((error) => {
                         setSession(null);
                         throw error;
-                    }
+                    });
                 },
                 signOut: () => {
                     setSession(null);

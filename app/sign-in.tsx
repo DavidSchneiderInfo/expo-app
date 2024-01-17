@@ -39,7 +39,7 @@ export default function SignIn() {
     const attemptLogin = (formData: any) => {
         setMessage(null);
         setIsLoading('Attempting login ...');
-        const response = signIn(formData.email, formData.password);
+        signIn(formData.email, formData.password);
         setIsLoading(false);
     }
 

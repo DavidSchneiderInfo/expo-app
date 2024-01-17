@@ -61,7 +61,9 @@ export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
     }
 
     return (
-        <View>
+        <View style={{
+            paddingTop: 10,
+        }}>
             <Controller
                 control={control}
                 rules={{
