@@ -10,6 +10,9 @@ export type ProfileDetails = {
     height: number | null;
     age: number | null;
     sex: Sex | null;
+    i_f: boolean;
+    i_m: boolean;
+    i_x: boolean;
     media: []
 }
 
@@ -18,6 +21,9 @@ export type ProfileUpdate = {
     sex: Sex;
     bio: string | null;
     height: number | null;
+    i_f: boolean;
+    i_m: boolean;
+    i_x: boolean;
 }
 
 export type MatchResponse = {

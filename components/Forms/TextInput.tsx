@@ -1,11 +1,12 @@
 import {useState} from "react";
 import {useTheme} from "@react-navigation/native";
-import {NativeSyntheticEvent, StyleSheet, TextInput as BaseTextInput, TextInputEndEditingEventData} from "react-native";
-import Colors from '../constants/Colors';
-import {Text, View} from "./Themed";
+import {NativeSyntheticEvent, TextInput as BaseTextInput, TextInputEndEditingEventData} from "react-native";
+import Colors from '../../constants/Colors';
+import {Text} from "../Themed";
+import InputBlock, {InputBlockProps} from "./InputBlock";
+import FormStyles from "./FormStyles";
 
-export type TextInputProps = {
-    label: string,
+export type TextInputProps = InputBlockProps & {
     placeholder: null | string,
     initialValue?: string,
     secureTextEntry?: boolean,
@@ -34,10 +35,7 @@ function TextInput({label, onChange, initialValue, placeholder, secureTextEntry,
     }
 
     return (
-        <View style={style.container}>
-            <Text style={style.label}>
-                {label}
-            </Text>
+        <InputBlock label={label}>
             <BaseTextInput
                 placeholder={placeholder ?? label}
                 onPressIn={onPress}
@@ -46,40 +44,16 @@ function TextInput({label, onChange, initialValue, placeholder, secureTextEntry,
                 value={value}
                 secureTextEntry={secureTextEntry}
                 style={[
-                    style.input,
-                    ,
+                    FormStyles.input,
                     {
                         borderColor: themeStyles.text,
                     },
                 ]}/>
-            {validationMessage && <Text style={style.error}>
+            {validationMessage && <Text style={FormStyles.error}>
                 {validationMessage}
             </Text>}
-        </View>
+        </InputBlock>
     );
 }
 
 export default TextInput;
-
-const style = StyleSheet.create({
-    container: {
-        marginBottom: 20,
-        width: '100%',
-        paddingHorizontal: 20,
-    },
-    label: {
-        marginStart: 6
-    },
-    input: {
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderRadius: 5,
-        alignSelf: 'stretch',
-        marginVertical: 5,
-        padding: 5,
-    },
-    error: {
-        color: 'gray',
-        padding: 5,
-    },
-})

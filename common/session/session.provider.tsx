@@ -1,28 +1,20 @@
-import React, {useEffect} from "react";
+import React from "react";
 import AuthContext from "./session.context";
 import useApi from "../api";
 import {useStorageState} from "../storage";
 import {useRouter} from "expo-router";
+import {UserAuthentication} from "../types";
 
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
     const {requestSignUp, requestSignIn, refreshSession} = useApi();
     const router = useRouter();
 
-    const parseSession = () => {
+    const parseSession = (): UserAuthentication => {
         return session
             ? JSON.parse(session)
             : session;
     }
-
-    useEffect(() => {
-        if(session !== null)
-        {
-            refreshSession(session).then((credentials) => {
-                setSession(JSON.stringify(credentials));
-            });
-        }
-    }, []);
 
     return (
         <AuthContext.Provider
@@ -51,6 +43,14 @@ export function SessionProvider(props: React.PropsWithChildren) {
                 },
                 signOut: () => {
                     setSession(null);
+                },
+                refresh: () => {
+                    return refreshSession(parseSession().token).then((credentials)=>{
+                        setSession(JSON.stringify(credentials));
+                    }).catch((error) => {
+                        setSession(null);
+                        throw error;
+                    })
                 },
                 session: parseSession(),
                 isLoading

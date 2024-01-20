@@ -5,7 +5,7 @@ import {AuthForm, Error} from "../components/Auth";
 import {Controller, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useSession} from "../common/session";
-import TextInput from "../components/TextInput";
+import TextInput from "../components/Forms/TextInput";
 import Button from "../components/Button";
 import {useState} from "react";
 

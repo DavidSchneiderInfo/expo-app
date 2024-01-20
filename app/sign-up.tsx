@@ -4,7 +4,7 @@ import {AuthForm, authStyles, Error} from "../components/Auth";
 import * as yup from 'yup';
 import {useForm, Controller, set} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import TextInput from "../components/TextInput";
+import TextInput from "../components/Forms/TextInput";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import Button from "../components/Button";
 import {useState} from "react";
