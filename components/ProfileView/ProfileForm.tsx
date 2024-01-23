@@ -1,15 +1,14 @@
-import {ProfileDetails, ProfileUpdate, Sex} from "../common/types";
-import {Text, View} from "./Themed";
+import {ProfileDetails, ProfileUpdate, Sex} from "../../common/types";
+import {Text, View} from "../Themed";
 import * as yup from 'yup';
 import {Controller, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import TextInput from "./Forms/TextInput";
-import Button from "./Button";
-import DropdownInput from "./Forms/Dropdown";
-import CheckboxInput from "./Forms/Checkbox";
+import TextInput from "../Forms/TextInput";
+import Button from "../Button";
+import DropdownInput from "../Forms/Dropdown";
+import CheckboxInput from "../Forms/Checkbox";
 import {useState} from "react";
-import {FormStyles, InputBlock} from "./Forms";
-import {useSession} from "../common/session";
+import {FormStyles, InputBlock} from "../Forms";
 
 export const availableSexes = [
     { label: 'Female', value: Sex.f },
@@ -66,7 +65,10 @@ export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
         },
     });
 
+
+
     const updateProfile = (formData: any) => {
+
         if(
             formData.i_f
             ||
@@ -74,7 +76,7 @@ export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
             ||
             formData.i_x
         ) {
-            onSubmit({
+            const data = {
                 name: formData.username,
                 sex: formData.sex,
                 height: formData.height,
@@ -82,7 +84,8 @@ export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
                 i_f: formData.i_f!==undefined ? formData.i_f : false,
                 i_m: formData.i_m!==undefined ? formData.i_m : false,
                 i_x: formData.i_x!==undefined ? formData.i_x : false,
-            });
+            };
+            onSubmit(data);
         } else {
             setSexPrefError("Please pick at least 1 flavor.");
         }
@@ -124,7 +127,7 @@ export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
                     render={({ field: { onChange, value } }) => (
                         <CheckboxInput
                             label='Female'
-                            value={value!==undefined ? value : false}
+                            value={value || profile.i_f}
                             onChange={(v) => {
                                 setSexPrefError(false);
                                 onChange(v);
@@ -144,7 +147,7 @@ export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
                     render={({ field: { onChange, value } }) => (
                         <CheckboxInput
                             label='Male'
-                            value={value!==undefined ? value : false}
+                            value={value || profile.i_m}
                             onChange={(v) => {
                                 setSexPrefError(false);
                                 onChange(v);
@@ -164,7 +167,7 @@ export default function ProfileForm({profile, onSubmit}: ProfileFormProps) {
                     render={({ field: { onChange, value } }) => (
                         <CheckboxInput
                             label='Other'
-                            value={value!==undefined ? value : false}
+                            value={value || profile.i_m}
                             onChange={(v) => {
                                 setSexPrefError(false);
                                 onChange(v);

@@ -9,7 +9,7 @@ export type ProfileDetails = {
     bio: string | null;
     height: number | null;
     age: number | null;
-    sex: Sex | null;
+    sex: Sex;
     i_f: boolean;
     i_m: boolean;
     i_x: boolean;
@@ -54,3 +54,14 @@ type TDateISODate = `${TYear}-${TMonth}-${TDay}`;
 type TDateISOTime = `${THours}:${TMinutes}:${TSeconds}.${TMilliseconds}`;
 
 export type TDateISO = `${TDateISODate}T${TDateISOTime}Z`;
+
+export type MatchRequest = MatchListRequest & {}
+
+export type MatchListRequest = {
+    coords: Coordinates
+}
+
+export type Coordinates = {
+    latitude: number,
+    longitude: number,
+}

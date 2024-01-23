@@ -12,7 +12,7 @@ export type CheckboxInputProps = InputBlockProps & {
 }
 
 export default function CheckboxInput({label, validationMessage, value, onChange}: CheckboxInputProps) {
-    const [isChecked, setChecked] = useState<boolean>(false);
+    const [isChecked, setChecked] = useState<boolean>(value);
 
     const toggle = (value: boolean) => {
         onChange && onChange(value);

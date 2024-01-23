@@ -1,5 +1,4 @@
 import {useSession} from "../../../common/session";
-import ProfileForm from "../../../components/ProfileForm";
 import ScrollView from "../../../components/ScrollView";
 import useApi from "../../../common/api";
 import {ProfileUpdate} from "../../../common/types";
@@ -7,6 +6,8 @@ import {useState} from "react";
 import ProfileView from "../../../components/ProfileView";
 import {Text, View} from "../../../components/Themed";
 import Button from "../../../components/Button";
+import {StyleSheet} from "react-native";
+import ProfileForm from "../../../components/ProfileView/ProfileForm";
 
 export default function ProfileScreen() {
     const {session, refresh} = useSession();
@@ -16,7 +17,6 @@ export default function ProfileScreen() {
 
     const onSubmit = (formData: ProfileUpdate) => {
         setLoading(true);
-        console.log(formData);
         if(!session)
         {
             console.log("No active session");
@@ -35,31 +35,40 @@ export default function ProfileScreen() {
     }
 
     return (
-        <ScrollView>
-            {session && session?.user && (
-                <>
-                    {!edit ? (
-                        <View>
-                            <Button
-                                action={() => {
-                                    setEdit(true);
-                                }}
-                            >
-                                Edit
-                            </Button>
-                            <ProfileView profile={session.user} />
-                        </View>
-                    ) : (
-                        <View>
-                            {!loading ? (
-                                <ProfileForm profile={session.user} onSubmit={onSubmit}/>
-                            ) : (
-                                <Text>Loading</Text>
-                            )}
-                        </View>
-                    )}
-                </>
-            )}
-        </ScrollView>
+        <View style={styles.container}>
+            <ScrollView>
+                {session && session?.user && (
+                    <>
+                        {!edit ? (
+                            <View>
+                                <Button
+                                    action={() => {
+                                        console.log(session?.user)
+                                        setEdit(true);
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+                                <ProfileView profile={session.user} />
+                            </View>
+                        ) : (
+                            <View>
+                                {!loading ? (
+                                    <ProfileForm profile={session.user} onSubmit={onSubmit}/>
+                                ) : (
+                                    <Text>Loading</Text>
+                                )}
+                            </View>
+                        )}
+                    </>
+                )}
+            </ScrollView>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+});

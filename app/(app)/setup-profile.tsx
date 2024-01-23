@@ -1,20 +1,17 @@
 import {useSession} from "../../common/session";
-import ProfileForm from "../../components/ProfileForm";
 import ScrollView from "../../components/ScrollView";
 import {ProfileUpdate} from "../../common/types";
 import useApi from "../../common/api";
-import {router, useRouter} from "expo-router";
-import {useEffect} from "react";
+import {useRouter} from "expo-router";
+import ProfileForm from "../../components/ProfileView/ProfileForm";
 
 export default function SetupProfile() {
     const {session, refresh} = useSession();
     const router = useRouter();
     const {setUserData} = useApi();
 
-    useEffect(()=>{
-        if(session?.active)
-            router.push('/');
-    }, []);
+    if(session?.active)
+        router.push('/');
 
     const onSubmit = (formData: ProfileUpdate) => {
         if(!session)

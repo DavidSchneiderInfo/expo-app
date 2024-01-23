@@ -22,7 +22,6 @@ export default function TabLayout() {
     if(session && !session.active) {
         return <Redirect href="/setup-profile" />;
     }
-    console.log(session);
 
   return (
     <Tabs

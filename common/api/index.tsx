@@ -1,4 +1,4 @@
-import {MatchResponse, ProfileDetails, ProfileUpdate, UserAuthentication} from "../types";
+import {MatchListRequest, MatchResponse, ProfileDetails, ProfileUpdate, UserAuthentication} from "../types";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -105,7 +105,7 @@ function useApi() {
             .then((response) => response.json());
     }
 
-    const getProfiles = async (token: string): Promise<ProfileDetails[]> => {
+    const getProfiles = async (token: string, request: MatchListRequest): Promise<ProfileDetails[]> => {
         return await makeApiRequest(apiUrl + 'match', {
             method: 'GET',
             headers: {
@@ -114,11 +114,7 @@ function useApi() {
                 'Authorization': `Bearer ${token}`
             },
         })
-            .then((response) => response.json())
-            .then((response) => {
-                console.log(response);
-                return response;
-            });
+            .then((response) => response.json());
     }
 
     const likeProfile = async (token: string, profileId: number): Promise<MatchResponse> => {
